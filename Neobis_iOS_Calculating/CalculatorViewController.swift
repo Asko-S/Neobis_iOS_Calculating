@@ -1,11 +1,10 @@
-//  CalculatorViewController.swift
+//  ViewController.swift
 //  Neobis_iOS_Calculating
-//  Created by Askar Soronbekov 
-//
+//  Created by Askar Soronbekov
 
 import UIKit
 
- class ClaculatorViewController: UIViewController {
+ class ViewController: UIViewController {
 
      let mainView = CalculatorView()
      let calculator = CalculatorModel(operand1: 0, operand2: 0, currentOperation: .add)
