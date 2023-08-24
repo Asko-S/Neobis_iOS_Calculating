@@ -7,7 +7,7 @@ import UIKit
 
 class CalculatorView : UIView {
     
-    var operationPressed: ((Double,Int) -> ())?
+    var operationPressed: ((Float,Int) -> ())?
     
     let button0 : UIButton = {
         let button = UIButton()
@@ -198,7 +198,7 @@ class CalculatorView : UIView {
         button.layer.cornerRadius = 40
         button.setTitle("%", for: .normal)
         button.setTitleColor(.black, for: .normal)
-        //        button.contentEdgeInsets = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
+//        button.contentEdgeInsets = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 35)
         button.tag = 17
         button.addTarget(self, action: #selector(addTargets(_:)), for: .touchUpInside)
@@ -225,7 +225,7 @@ class CalculatorView : UIView {
         button.layer.cornerRadius = 40
         button.setTitle("AC", for: .normal)
         button.setTitleColor(.black, for: .normal)
-        //        button.contentEdgeInsets = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
+//        button.contentEdgeInsets = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 35)
         
         return button
@@ -297,13 +297,13 @@ class CalculatorView : UIView {
         backgroundColor = .black
         
         addToView()
-        constraints()
+        addConstraints()
     }
     
     @objc func addTargets(_ sender: UIButton){
+        sender.animateButton()
         let tag = sender.tag - 1
-        
-        switch tag {
+        switch tag{
         case 0,1,2,3,4,5,6,7,8,9:
             if result.text == "0" {
                 result.text = "\(tag)"
@@ -312,21 +312,34 @@ class CalculatorView : UIView {
             }
         case 10:
             if result.text == "0"{
-                result.text = "0,"
-            } else if let text = result.text, !text.contains(",") {
-                result.text = "\(String(describing: text)),"
+                result.text = "0."
+            } else if let text = result.text, !text.contains(".") {
+                result.text = "\(String(describing: text))."
             }
         case 11:
-            if let text = result.text, let value = Double(text) {
+            if let text = result.text, let value = Float(text) {
                 operationPressed?(value,tag)
             }
             
         case 12,13,14,15:
-            if let text = result.text, let value = Double(text){
+            if let text = result.text, let value = Float(text){
                 operationPressed?(value,tag)
                 result.text = "0"
             }
-            
+        case 16:
+            if let text = result.text, let value = Float(text) {
+                operationPressed?(value,tag)
+            }
+        case 17:
+            if let text = result.text, let value = Float(text) {
+                let negativeValue = -value
+                let intNegative = Int(negativeValue)
+                if negativeValue - Float(intNegative) == 0 {
+                    result.text = "\(intNegative)"
+                } else {
+                    result.text = String(negativeValue)
+                }
+            }
         default:
             break
         }
@@ -384,7 +397,7 @@ class CalculatorView : UIView {
         stackView4.addArrangedSubview(buttonDivise)
     }
     
-    func constraints(){
+    func addConstraints(){
         button0.translatesAutoresizingMaskIntoConstraints = false
         button1.translatesAutoresizingMaskIntoConstraints = false
         button2.translatesAutoresizingMaskIntoConstraints = false
@@ -452,5 +465,15 @@ class CalculatorView : UIView {
             stackView4.heightAnchor.constraint(equalToConstant: 80),
         ])
         
+    }
+}
+
+
+extension UIButton {
+    func animateButton() {
+        self.transform = CGAffineTransform(scaleX: 0.975, y: 0.96)
+        UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 6, options: .allowUserInteraction, animations: {
+            self.transform = CGAffineTransform.identity
+        }, completion: nil)
     }
 }

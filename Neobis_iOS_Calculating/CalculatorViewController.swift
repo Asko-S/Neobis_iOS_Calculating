@@ -1,15 +1,14 @@
-//  ViewController.swift
-//  Neobis_iOS_Calculating
-//  Created by Askar Soronbekov
+//CalculatorViewController.swift
+//Neobis_iOS_UIScreens
+//Created by Askar Soronbekov
 
 import UIKit
 
 class ViewController: UIViewController {
     
     let mainView = CalculatorView()
-    var answer: Double = 0
+    var answer: Float = 0
     var calculator = CalculatorModel(operand1: 0, operand2: 0, currentOperation: .add)
-    
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
@@ -18,22 +17,74 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        calculate()
         addToView()
-        addConstraints()
-    }
-    
-    func addToView() {
-        view.addSubview(mainView)
-        
+        constraints()
     }
     
     func calculate() {
         mainView.operationPressed = {(operand1, currentOperation) in
             switch currentOperation{
             case 11:
+                self.calculator.operand1 = self.answer
+                self.calculator.operand2 = Float(operand1)
+                let answer = self.calculator.performOperation()
+                if floor(answer) == answer {
+                    self.mainView.result.text = String(format: "%.0f", answer)
+                } else {
+                    self.mainView.result.text = String(answer)
+                }
+                self.answer = 0
+            case 12:
                 if self.answer == 0 {
-                    self.answer = Double(operand1)
+                    self.answer = Float(operand1)
                     self.calculator.currentOperation = .add
+                } else {
+                    self.calculator.operand1 = self.answer
+                    self.calculator.operand2 = Float(operand1)
+                    self.answer = self.calculator.performOperation()
+                    self.calculator.currentOperation = .add
+                }
+            case 13:
+                if self.answer == 0 {
+                    self.answer = Float(operand1)
+                    self.calculator.currentOperation = .subtract
+                } else {
+                    self.calculator.operand1 = self.answer
+                    self.calculator.operand2 = Float(operand1)
+                    self.answer = self.calculator.performOperation()
+                    self.calculator.currentOperation = .subtract
+                }
+            case 14:
+                if self.answer == 0 {
+                    self.answer = Float(operand1)
+                    self.calculator.currentOperation = .multiply
+                } else {
+                    self.calculator.operand1 = self.answer
+                    self.calculator.operand2 = Float(operand1)
+                    self.answer = self.calculator.performOperation()
+                    self.calculator.currentOperation = .multiply
+                }
+            case 15:
+                if self.answer == 0 {
+                    self.answer = Float(operand1)
+                    self.calculator.currentOperation = .divide
+                } else {
+                    self.calculator.operand1 = self.answer
+                    self.calculator.operand2 = Float(operand1)
+                    self.answer = self.calculator.performOperation()
+                    self.calculator.currentOperation = .divide
+                }
+            case 16:
+                if let text = self.mainView.result.text, let value = Float(text) {
+                    self.answer = value / 100
+                    let intAnswer = Int(self.answer)
+                    if self.answer - Float(intAnswer) == 0 {
+                        self.mainView.result.text = "\(intAnswer)"
+                    } else {
+                        let stringAnswer = String(self.answer)
+                        self.mainView.result.text = stringAnswer
+                    }
                 }
             default:
                 break
@@ -41,7 +92,12 @@ class ViewController: UIViewController {
         }
     }
     
-    func addConstraints() {
+    func addToView() {
+        view.addSubview(mainView)
+        
+    }
+    
+    func constraints() {
         mainView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -54,5 +110,3 @@ class ViewController: UIViewController {
         
     }
 }
-
-
